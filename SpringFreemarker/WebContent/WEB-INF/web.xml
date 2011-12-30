@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>SpringFreemarker</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- 开机启动的Servlet: 初始化了log4j -->
+	<servlet>
+	   <description></description>
+	   <display-name>LogInitServlet</display-name>
+	   <servlet-name>LogInitServlet</servlet-name>
+	   <servlet-class>servlet.LogInitServlet</servlet-class>
+	   <init-param>
+	      <description>log4j configure file path</description>
+	      <param-name>log4jConfig</param-name>
+	      <param-value>WEB-INF/log4j.properties</param-value>
+	    </init-param>
+	   <load-on-startup>-1</load-on-startup>
+	 </servlet>
+	  <servlet-mapping>
+	    <servlet-name>LogInitServlet</servlet-name>
+	    <url-pattern>/LogInitServlet</url-pattern>
+	  </servlet-mapping>
+	  
+	 <!-- springframework log4j的配置 -->
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/log4j.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>log4jRefreshInterval</param-name>
+		<param-value>60000</param-value>
+	</context-param>
+	<context-param>
+     	<param-name>log4jExposeWebAppRoot</param-name>
+     	<param-value>false</param-value>
+	</context-param>
+
+	
+	<!-- /Spring框架由此启动: 启动Web容器时，此lisenter加载Spring容器 -->  	
+	<listener> 
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>	
+	<!-- Spring容器配置文件路径 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:applicationContext-*.xml</param-value>
+	</context-param>
+
+	<!-- 视图层分发控制器 -->
+	<servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/dispatcher.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 请求处理时间 filter-->
+	<filter>
+		<filter-name>processTime</filter-name>
+		<filter-class>com.hoo.filter.ProcessTimeFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>processTime</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+</web-app>
